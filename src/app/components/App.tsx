@@ -30,16 +30,8 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <img src={logo} />
-      <h2>Rectangle Creator</h2>
-      <p>
-        Count: <input ref={countRef} />
-      </p>
-      <button id="create" onClick={onCreate}>
-        Create
-      </button>
-      <button onClick={onCancel}>Cancel</button>
+    <div style={{ height:"100%" , width:'100%'}}>
+   <iframe src='http://localhost:3000/'  style={{ height:"100%" , width:'100%',border:'none'}}/>
     </div>
   );
 }
