@@ -3,35 +3,47 @@ import logo from '../assets/logo.svg';
 import '../styles/ui.css';
 
 function App() {
-  const textbox = React.useRef<HTMLInputElement>(undefined);
 
-  const countRef = React.useCallback((element: HTMLInputElement) => {
-    if (element) element.value = '5';
-    textbox.current = element;
-  }, []);
 
-  const onCreate = () => {
-    const count = parseInt(textbox.current.value, 10);
-    parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*');
-  };
 
-  const onCancel = () => {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-  };
+  const Retrieve = () => {
+    parent.postMessage({ pluginMessage: { type: 'Retrieve'  } }, '*');
+  }
+
 
   React.useEffect(() => {
-    // This is how we read messages sent from the plugin controller
+
     window.onmessage = (event) => {
-      const { type, message } = event.data.pluginMessage;
+      const { type, message , data } = event.data.pluginMessage;
       if (type === 'create-rectangles') {
         console.log(`Figma Says: ${message}`);
       }
+      if (type === "Copy") {
+        parent.postMessage({ pluginMessage: { type: 'Save', data } }, '*')
+      }
+
+      if (type === 'Saved') {
+        console.log("Saved",data)
+        Retrieve()
+      }
+
+      if (type === 'Retrieved') {
+        console.log('Retrieved',data)
+      }
     };
+
+
+
   }, []);
+
+
+
+
+
 
   return (
     <div style={{ height:"100%" , width:'100%'}}>
-   <iframe src='http://localhost:3000/'  style={{ height:"100%" , width:'100%',border:'none'}}/>
+   <iframe src='http://localhost:3000/'  style={{ height:"100%" , width:'100%',border:'none'}} id='layyyout-iframe' />
     </div>
   );
 }

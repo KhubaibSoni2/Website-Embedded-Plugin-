@@ -1,30 +1,35 @@
 figma.showUI(__html__, {
   width: 400,
-  height: 700,
+  height:700,
 });
 
 
-figma.ui.onmessage = (msg) => {
-  if (msg.type === 'create-rectangles') {
-    const nodes = [];
+figma.ui.onmessage = async (msg) => {
+  if (msg) {
+    if (msg.type === 'Save') {
+      await figma.clientStorage.setAsync('figma', msg.data)
 
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
+       figma.ui.postMessage({
+         type: 'Saved',
+         data: msg.data
+       })
     }
 
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
+     if (msg.type === 'Retrieve') {
+       const figmadata = await figma.clientStorage.getAsync('figma')
 
-    // This is how figma responds back to the ui
-    figma.ui.postMessage({
-      type: 'create-rectangles',
-      message: `Created ${msg.count} Rectangles`,
-    });
+
+     figma.createComponent(figmadata)
+
+
+       figma.ui.postMessage({
+         type: 'Retrieved',
+         data: figmadata
+       })
+     }
+
   }
 
-  figma.closePlugin();
+
+
 };
